@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>C2 Panel - Login</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #0a0e17;
+            color: #c8d6e5;
+            font-family: 'Courier New', monospace;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .login-container {
+            background: #111b29;
+            border: 1px solid #1a2a3a;
+            border-radius: 12px;
+            padding: 50px;
+            width: 400px;
+            box-shadow: 0 0 50px rgba(0,212,255,0.1);
+        }
+        .login-container .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .login-container .logo h1 {
+            color: #00d4ff;
+            font-size: 28px;
+            text-shadow: 0 0 20px rgba(0,212,255,0.3);
+        }
+        .login-container .logo span {
+            color: #ff6b6b;
+        }
+        .login-container .logo p {
+            color: #8395a7;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            color: #8395a7;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            background: #0a0e17;
+            border: 1px solid #1a2a3a;
+            border-radius: 4px;
+            color: #c8d6e5;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        .form-group input:focus {
+            border-color: #00d4ff;
+            outline: none;
+            box-shadow: 0 0 20px rgba(0,212,255,0.1);
+        }
+        .form-group input::placeholder {
+            color: #2a3a4a;
+        }
+        .btn {
+            width: 100%;
+            padding: 12px;
+            background: #00d4ff;
+            border: none;
+            border-radius: 4px;
+            color: #000;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn:hover {
+            background: #00a8cc;
+            transform: scale(1.02);
+        }
+        .btn:active {
+            transform: scale(0.98);
+        }
+        .error {
+            color: #ff6b6b;
+            font-size: 12px;
+            margin-top: 10px;
+            text-align: center;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 11px;
+            color: #2a3a4a;
+        }
+        .footer a {
+            color: #00d4ff;
+            text-decoration: none;
+        }
+        .status-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background: #0f0;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+            margin-right: 5px;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+    </style>
+</head>
+<body>
+<div class="login-container">
+    <div class="logo">
+        <h1>🖥️ C2 <span>PANEL</span></h1>
+        <p>
+            <span class="status-dot"></span>
+            Secure Login
+        </p>
+    </div>
+
+    <form id="loginForm">
+        <div class="form-group">
+            <label>Username</label>
+            <input type="text" id="username" placeholder="Enter username" value="admin" required>
+        </div>
+        <div class="form-group">
+            <label>Password</label>
+            <input type="password" id="password" placeholder="Enter password" value="admin123" required>
+        </div>
+        <button type="submit" class="btn">➤ LOGIN</button>
+        <div id="errorMsg" class="error"></div>
+    </form>
+
+    <div class="footer">
+        C2 Panel v1.0 | <a href="#">Kernel-Level Rootkit</a>
+    </div>
+</div>
+
+<script>
+    document.getElementById('loginForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const username = document.getElementById('username').value;
+        const password = document.getElementById('password').value;
+        const errorMsg = document.getElementById('errorMsg');
+        
+        // Simple validation (replace with real auth)
+        if (username === 'admin' && password === 'admin123') {
+            window.location.href = '/';
+        } else {
+            errorMsg.textContent = '[✗] Invalid credentials!';
+            errorMsg.style.color = '#ff6b6b';
+        }
+    });
+
+    // Enter key support
+    document.getElementById('password').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            document.getElementById('loginForm').dispatchEvent(new Event('submit'));
+        }
+    });
+</script>
+</body>
+</html>
