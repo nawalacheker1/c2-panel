@@ -1,0 +1,57 @@
+/**
+ * C2 PANEL - WebSocket Client
+ */
+
+class C2WebSocket {
+    constructor() {
+        this.socket = null;
+        this.reconnectAttempts = 0;
+        this.maxReconnectAttempts = 10;
+        this.reconnectDelay = 3000;
+        this.listeners = {};
+        this.init();
+    }
+
+    init() {
+        const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+        const url = `${protocol}//${window.location.host}/socket.io/?EIO=4&transport=websocket`;
+        
+        try {
+            this.socket = new WebSocket(url);
+            this.socket.onopen = this.onOpen.bind(this);
+            this.socket.onmessage = this.onMessage.bind(this);
+            this.socket.onclose = this.onClose.bind(this);
+            this.socket.onerror = this.onError.bind(this);
+        } catch (e) {
+            console.error('[WebSocket] Failed to connect:', e);
+            this.reconnect();
+        }
+    }
+
+    onOpen(event) {
+        console.log('[WebSocket] Connected');
+        this.reconnectAttempts = 0;
+        this.emit('connected', { timestamp: new Date().toISOString() });
+    }
+
+    onMessage(event) {
+        try {
+            const data = JSON.parse(event.data);
+            
+            // Skip ping/pong
+            if (data.type === 'ping' || data.type === 'pong') {
+                return;
+            }
+            
+            // Handle different message types
+            switch (data.type) {
+                case 'new_alert':
+                    this.emit('alert', data.data);
+                    break;
+                case 'agent_status':
+                    this.emit('agent_status', data.data);
+                    break;
+                case 'task_update':
+                    this.emit('task_update', data.data);
+                    break;
+                default:
