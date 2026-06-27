@@ -55,3 +55,71 @@ class C2WebSocket {
                     this.emit('task_update', data.data);
                     break;
                 default:
+                    this.emit('message', data);
+            }
+        } catch (e) {
+            console.warn('[WebSocket] Invalid message:', event.data);
+        }
+    }
+
+    onClose(event) {
+        console.log('[WebSocket] Disconnected');
+        this.reconnect();
+    }
+
+    onError(event) {
+        console.error('[WebSocket] Error:', event);
+    }
+
+    reconnect() {
+        if (this.reconnectAttempts >= this.maxReconnectAttempts) {
+            console.error('[WebSocket] Max reconnect attempts reached');
+            return;
+        }
+
+        this.reconnectAttempts++;
+        const delay = this.reconnectDelay * this.reconnectAttempts;
+        console.log(`[WebSocket] Reconnecting in ${delay/1000}s (attempt ${this.reconnectAttempts})`);
+        
+        setTimeout(() => {
+            this.init();
+        }, delay);
+    }
+
+    send(data) {
+        if (this.socket && this.socket.readyState === WebSocket.OPEN) {
+            this.socket.send(JSON.stringify(data));
+        } else {
+            console.warn('[WebSocket] Not connected, cannot send');
+        }
+    }
+
+    emit(event, data) {
+        this.send({ event, data });
+    }
+
+    on(event, callback) {
+        if (!this.listeners[event]) {
+            this.listeners[event] = [];
+        }
+        this.listeners[event].push(callback);
+    }
+
+    off(event, callback) {
+        if (!this.listeners[event]) return;
+        if (callback) {
+            this.listeners[event] = this.listeners[event].filter(cb => cb !== callback);
+        } else {
+            delete this.listeners[event];
+        }
+    }
+
+    emitEvent(event, data) {
+        if (this.listeners[event]) {
+            this.listeners[event].forEach(callback => callback(data));
+        }
+    }
+}
+
+// Singleton
+window.C2WebSocket = new C2WebSocket();
