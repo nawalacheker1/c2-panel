@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>C2 Panel - Agents</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #0a0e17;
+            color: #c8d6e5;
+            font-family: 'Courier New', monospace;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid #1a2a3a;
+            margin-bottom: 30px;
+        }
+        .header h1 {
+            color: #00d4ff;
+            font-size: 24px;
+        }
+        .header a {
+            color: #00d4ff;
+            text-decoration: none;
+            padding: 8px 16px;
+            border: 1px solid #00d4ff;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+        .header a:hover {
+            background: #00d4ff;
+            color: #000;
+        }
+        .section {
+            background: #111b29;
+            border: 1px solid #1a2a3a;
+            border-radius: 8px;
+            padding: 20px;
+        }
+        .section-title {
+            color: #00d4ff;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #1a2a3a;
+        }
+        th {
+            color: #8395a7;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        td {
+            font-size: 13px;
+        }
+        td a {
+            color: #00d4ff;
+            text-decoration: none;
+        }
+        td a:hover {
+            text-decoration: underline;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        .status-badge.online { background: #0f0; color: #000; }
+        .status-badge.offline { background: #f00; color: #fff; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <h1>📡 Agents</h1>
+        <a href="/">← Back to Dashboard</a>
+    </div>
+
+    <div class="section">
+        <div class="section-title">All Agents ({{ agents|length }})</div>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Hostname</th>
+                    <th>IP</th>
+                    <th>OS</th>
+                    <th>Kernel</th>
+                    <th>Status</th>
+                    <th>Last Seen</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for agent in agents %}
+                <tr>
+                    <td>{{ agent[0] }}</td>
+                    <td>{{ agent[1] or '-' }}</td>
+                    <td>{{ agent[2] or '-' }}</td>
+                    <td>{{ agent[3] or '-' }}</td>
+                    <td>{{ agent[4] or '-' }}</td>
+                    <td><span class="status-badge {{ agent[5] }}">{{ agent[5] or 'unknown' }}</span></td>
+                    <td>{{ agent[6] or '-' }}</td>
+                    <td><a href="/terminal/{{ agent[0] }}">▶ Terminal</a></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>
