@@ -1,0 +1,136 @@
+/**
+ * C2 PANEL - Terminal Styles
+ */
+
+.terminal-container {
+    background: #000;
+    border-radius: 8px;
+    padding: 20px;
+    font-family: 'Courier New', monospace;
+    height: 100%;
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+}
+
+.terminal-output {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px 0;
+    color: #0f0;
+    font-size: 14px;
+    line-height: 1.6;
+    min-height: 300px;
+}
+
+.terminal-output .line {
+    padding: 2px 0;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+.terminal-output .line.prompt {
+    color: #0f0;
+}
+
+.terminal-output .line.output {
+    color: #c8d6e5;
+}
+
+.terminal-output .line.error {
+    color: #ff6b6b;
+}
+
+.terminal-output .line.info {
+    color: #00d4ff;
+}
+
+.terminal-output .line.warning {
+    color: #f9ca24;
+}
+
+.terminal-input {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    border-top: 1px solid #1a2a3a;
+    margin-top: 10px;
+}
+
+.terminal-input .prompt {
+    color: #0f0;
+    margin-right: 10px;
+    font-weight: bold;
+}
+
+.terminal-input input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: #0f0;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    outline: none;
+    padding: 5px 0;
+}
+
+.terminal-input input:focus {
+    outline: none;
+}
+
+.terminal-input input::placeholder {
+    color: #2a3a4a;
+}
+
+/* Terminal scrollbar */
+.terminal-output::-webkit-scrollbar {
+    width: 8px;
+}
+
+.terminal-output::-webkit-scrollbar-track {
+    background: #0a0e17;
+}
+
+.terminal-output::-webkit-scrollbar-thumb {
+    background: #1a2a3a;
+    border-radius: 4px;
+}
+
+.terminal-output::-webkit-scrollbar-thumb:hover {
+    background: #2a3a4a;
+}
+
+/* Terminal animations */
+@keyframes blink {
+    0%, 50% { opacity: 1; }
+    51%, 100% { opacity: 0; }
+}
+
+.terminal-cursor {
+    display: inline-block;
+    width: 10px;
+    height: 18px;
+    background: #0f0;
+    animation: blink 1s infinite;
+    margin-left: 2px;
+}
+
+/* Terminal status bar */
+.terminal-status {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 10px;
+    background: #0a0e17;
+    border-radius: 4px;
+    font-size: 11px;
+    color: #8395a7;
+    margin-bottom: 10px;
+}
+
+.terminal-status .status-online {
+    color: #0f0;
+}
+
+.terminal-status .status-offline {
+    color: #ff6b6b;
+}
