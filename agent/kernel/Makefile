@@ -18,5 +18,11 @@ load:
 remove:
 	sudo rmmod c2_kernel
 
+status:
+	sudo dmesg | grep c2 | tail -20
+
+install: all load
+	@echo "[+] C2 Kernel installed"
+
 test:
 	sudo dmesg | grep c2 | tail -30
